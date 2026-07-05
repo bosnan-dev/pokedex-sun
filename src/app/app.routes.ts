@@ -17,5 +17,10 @@ export const routes: Routes = [
                         .then(m => m.PokemonDetail)
             
     
+    },
+    {
+        path:'registro',
+        loadComponent:() => import('./pages/registro-entrenador/registro-entrenador')
+                        .then(m => m.RegistroEntrenador)
     }
 ];
