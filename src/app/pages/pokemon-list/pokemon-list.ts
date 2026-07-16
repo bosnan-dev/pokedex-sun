@@ -10,7 +10,9 @@ import { PokemonService }     from '../../services/pokemon.service';
 import { PokemonListItem }    from '../../interfaces/pokemon.interface';
 import { PokemonCard }        from '../../components/pokemon-card/pokemon-card';
 import { toSignal } from '@angular/core/rxjs-interop';
- 
+import { FavoritosStore } from '../../store/favoritos.store/favoritos.store'; 
+import { FavoritosReduxStore } from '../../store/favoritos-redux.store/favoritos-redux.store';
+
 @Component({
   selector:    'app-pokemon-list',
   imports:     [PokemonCard, ReactiveFormsModule],
@@ -23,13 +25,19 @@ export class PokemonList {
   private pokemonService = inject(PokemonService);
   private platformId     = inject(PLATFORM_ID);
   //private sub?: Subscription;
- 
+ //readonly favoritosSTore = inject(FavoritosStore)
+  readonly favoritosSTore = inject(FavoritosReduxStore)
+
+  // ngOnDestroy():void{
+  //   console.log('🔴 MUERE PokemonLIst', this.favoritos().size, 'favoritos')
+  // }
+
   pokemons     = signal<PokemonListItem[]>([]);
   cargando     = signal(false);
   error        = signal('');
   paginaActual = signal(1);
   totalCount   = signal(0);
-  favoritos    = signal<Set<number>>(new Set())
+  // favoritos    = signal<Set<number>>(new Set())
 
   readonly limit = 24
  
@@ -72,6 +80,7 @@ export class PokemonList {
   destacado = linkedSignal(()=> this.pokemonsFiltrados()[0] ?? null)
 
   constructor(){
+    console.log('🟢 NACE PokemonList', Date.now());
     this.cargarPokemons();
   }
 
@@ -135,20 +144,36 @@ export class PokemonList {
   //     console.log("Pokemon maracado como favorito, con id:", id);
   // }
 
-  onFavorito(id:number):void{
-     const actuales = new Set(this.favoritos())
-     if(actuales.has(id)){
-      actuales.delete(id);
-     } else {
-      actuales.add(id);
-     }
-     this.favoritos.set(actuales)
-  }
+  // onFavorito(id:number):void{
+  //    const actuales = new Set(this.favoritos())
+  //    if(actuales.has(id)){
+  //     actuales.delete(id);
+  //    } else {
+  //     actuales.add(id);
+  //    }
+  //    this.favoritos.set(actuales)
+  // }
 
-  esFavorito(id: number): boolean{
-    return this.favoritos().has(id)
-  }
+  // esFavorito(id: number): boolean{
+  //   return this.favoritos().has(id)
+  // }
 
+  // onFavorito(id:number): void{
+  //   this.favoritosSTore.alternar(id);
+  // }
+
+  // esFavorito(id:number): boolean{
+  //   return this.favoritosSTore.esFavorito(id)
+  // }
+
+  onFavorito(id:number): void{
+      this.favoritosSTore.dispatch({type: '[Favoritos] Alternar', id})
+    }
+
+  esFavorito(id:number): boolean{
+    return this.favoritosSTore.esFavorito(id)
+  }
+  
   getId(url: string):     number { return this.pokemonService.getIdFromUrl(url); }
   getSprite(url: string): string { return this.pokemonService.getSpriteUrl(url); }
     
