@@ -12,6 +12,8 @@ import { PokemonCard }        from '../../components/pokemon-card/pokemon-card';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FavoritosStore } from '../../store/favoritos.store/favoritos.store'; 
 import { FavoritosReduxStore } from '../../store/favoritos-redux.store/favoritos-redux.store';
+import { FavoritosNgrxStore } from '../../store/favoritos-ngrx.store/favoritos-ngrx.store';
+import { FavoritoPokemon } from '../../interfaces/pokemon.interface';
 
 @Component({
   selector:    'app-pokemon-list',
@@ -26,7 +28,7 @@ export class PokemonList {
   private platformId     = inject(PLATFORM_ID);
   //private sub?: Subscription;
  //readonly favoritosSTore = inject(FavoritosStore)
-  readonly favoritosSTore = inject(FavoritosReduxStore)
+  readonly favoritosSTore = inject(FavoritosNgrxStore)
 
   // ngOnDestroy():void{
   //   console.log('🔴 MUERE PokemonLIst', this.favoritos().size, 'favoritos')
@@ -166,9 +168,18 @@ export class PokemonList {
   //   return this.favoritosSTore.esFavorito(id)
   // }
 
-  onFavorito(id:number): void{
-      this.favoritosSTore.dispatch({type: '[Favoritos] Alternar', id})
+  // onFavorito(id:number): void{
+  //     this.favoritosSTore.dispatch({type: '[Favoritos] Alternar', id})
+  //   }
+
+  onFavorito(p: PokemonListItem): void {
+    const favorito: FavoritoPokemon = {
+      id: this.getId(p.url),
+      name: p.name,
+      spriteUrl: this.getSprite(p.url),
     }
+    this.favoritosSTore.alternar(favorito);
+  }
 
   esFavorito(id:number): boolean{
     return this.favoritosSTore.esFavorito(id)
