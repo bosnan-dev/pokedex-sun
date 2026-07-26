@@ -6,14 +6,17 @@ import { isPlatformBrowser }  from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subscription }       from 'rxjs';
-import { PokemonService }     from '../../services/pokemon.service';
-import { PokemonListItem }    from '../../interfaces/pokemon.interface';
-import { PokemonCard }        from '../../components/pokemon-card/pokemon-card';
+// import { PokemonService }     from '../../services/pokemon.service';
+import { PokemonService }     from '@services/pokemon.service';
+import { PokemonListItem }    from 'src/app/domain/pokemon.interface';
+import { PokemonCard }        from '@components/pokemon-card/pokemon-card';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FavoritosStore } from '../../store/favoritos.store/favoritos.store'; 
 import { FavoritosReduxStore } from '../../store/favoritos-redux.store/favoritos-redux.store';
 import { FavoritosNgrxStore } from '../../store/favoritos-ngrx.store/favoritos-ngrx.store';
-import { FavoritoPokemon } from '../../interfaces/pokemon.interface';
+import { FavoritoPokemon } from '../../domain/pokemon.interface';
+
+import { FavoritosFacade } from '@store';
 
 @Component({
   selector:    'app-pokemon-list',
@@ -28,7 +31,8 @@ export class PokemonList {
   private platformId     = inject(PLATFORM_ID);
   //private sub?: Subscription;
  //readonly favoritosSTore = inject(FavoritosStore)
-  readonly favoritosSTore = inject(FavoritosNgrxStore)
+  // readonly favoritosSTore = inject(FavoritosNgrxStore)
+  readonly favoritos = inject(FavoritosFacade)
 
   // ngOnDestroy():void{
   //   console.log('🔴 MUERE PokemonLIst', this.favoritos().size, 'favoritos')
@@ -178,11 +182,11 @@ export class PokemonList {
       name: p.name,
       spriteUrl: this.getSprite(p.url),
     }
-    this.favoritosSTore.alternar(favorito);
+    this.favoritos.alternar(favorito);
   }
 
   esFavorito(id:number): boolean{
-    return this.favoritosSTore.esFavorito(id)
+    return this.favoritos.esFavorito(id)
   }
   
   getId(url: string):     number { return this.pokemonService.getIdFromUrl(url); }

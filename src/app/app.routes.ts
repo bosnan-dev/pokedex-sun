@@ -6,17 +6,22 @@ export const routes: Routes = [
         redirectTo: '/pokemons',
         pathMatch: "full"
     },
-    {
-        path: 'pokemons',
-        loadComponent:() => import('./pages/pokemon-list/pokemon-list')
-                        .then(m => m.PokemonList)
-    },
-    {
-        path:'pokemons/:name',
-        loadComponent:() => import('./pages/pokemon-detail/pokemon-detail')
-                        .then(m => m.PokemonDetail)
+    // {
+    //     path: 'pokemons',
+    //     loadComponent:() => import('./pages/pokemon-list/pokemon-list')
+    //                     .then(m => m.PokemonList)
+    // },
+    // {
+    //     path:'pokemons/:name',
+    //     loadComponent:() => import('./pages/pokemon-detail/pokemon-detail')
+    //                     .then(m => m.PokemonDetail)
             
     
+    // },
+    {
+        path: 'pokemons',
+        loadChildren: () => import('./pages/pokemons/pokemons.routes')
+                        .then(m => m.pokemonsRoutes)
     },
     {
         path:'registro',
